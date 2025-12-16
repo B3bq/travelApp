@@ -5,14 +5,8 @@ import { getCurrentWeather } from './modules/weather';
 import { getLocationInfo } from './modules/location';
 import { weatherCodes, weatherIcons } from './modules/weatherCodes';
 
-Object.defineProperty(String.prototype, 'capitalize', {
-  value: function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-  },
-  enumerable: false
-});
-
 let goals = [];
+const divList = document.createElement('div');
 
 var map = L.map('map').setView([0, 0], 2);
 
@@ -59,8 +53,20 @@ async function onMapClick(e) {
                         weather: weatherCodes[weather.weathercode],
                         temperature: weather.temperature
                     });
+                    divList.innerHTML = '<h2>Lista miejsc do odwiedzenia:</h2>';
+                    goals.forEach(goal => {
+                        const goalItem = document.createElement('div');
+                        goalItem.className = 'goal-item';
+                        goalItem.innerHTML = `
+                            <h3>${goal.city}, ${goal.country}</h3>
+                            <p>Pogoda: ${goal.weather}, ${goal.temperature}°C</p>
+                        `;
+                        divList.appendChild(goalItem);
+                    });
+                    app.appendChild(divList);
                 });
             });
+
             
             popup
                 .setLatLng(e.latlng)
@@ -72,15 +78,5 @@ async function onMapClick(e) {
         });
 }
 
-const divList = document.getElementById('goalList');
 
 map.on('click', onMapClick);
-goals.forEach(goal => {
-    const goalItem = document.createElement('div');
-    goalItem.className = 'goal-item';
-    goalItem.innerHTML = `
-        <h3>${goal.city}, ${goal.country}</h3>
-        <p>Pogoda: ${goal.weather}, ${goal.temperature}°C</p>
-    `;
-    divList.appendChild(goalItem);
-});
