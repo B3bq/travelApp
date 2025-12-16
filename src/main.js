@@ -3,6 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getCurrentWeather } from './modules/weather';
 import { getLocationInfo } from './modules/location';
+import { weatherCodes, weatherIcons } from './modules/weatherCodes';
 
 Object.defineProperty(String.prototype, 'capitalize', {
   value: function() {
@@ -10,6 +11,8 @@ Object.defineProperty(String.prototype, 'capitalize', {
   },
   enumerable: false
 });
+
+let goals = [];
 
 var map = L.map('map').setView([0, 0], 2);
 
@@ -29,17 +32,36 @@ async function onMapClick(e) {
 
     getCurrentWeather(lat, lng)
         .then(weather => {
-            let isDay = "Day";
+            let isDay = 'Day';
 
             if(weather.is_day === 0) {
                 isDay = "Night";
             }
 
             const content = `<h2>${location.country}</h2><br>
-                             City: ${location.city || location.town || location.village || 'N/A'}<br>
-                             It is currently ${isDay}<br>
-                             Temperature: ${weather.temperature}°C<br>
-                             Windspeed: ${weather.windspeed} km/h`;
+                             <h4>${weatherCodes[weather.weathercode]} ${weatherIcons[weather.weathercode]?.[isDay == "Day" ? "day": "night"]}</h4><br>
+                             Miasto: ${location.city || location.town || location.village || 'N/A'}<br>
+                             Aktualnie jest ${isDay == "Day" ? "Dzień" : "Noc"}<br>
+                             Temperatura: ${weather.temperature}°C<br>
+                             Prędkość wiatru: ${weather.windspeed} km/h<br>
+                             <button id="addToList">Dodaj do listy miejsc do odwiedzenia</button>`;
+            
+            map.once('popupopen', () => {
+                const btn = document.getElementById('addToList');
+                if (!btn) return;
+
+                btn.addEventListener('click', () => {
+                    goals.push({
+                        country: location.country,
+                        city: location.city || location.town || location.village || 'N/A',
+                        latitude: lat,
+                        longitude: lng,
+                        weather: weatherCodes[weather.weathercode],
+                        temperature: weather.temperature
+                    });
+                });
+            });
+            
             popup
                 .setLatLng(e.latlng)
                 .setContent(content)
@@ -50,4 +72,15 @@ async function onMapClick(e) {
         });
 }
 
+const divList = document.getElementById('goalList');
+
 map.on('click', onMapClick);
+goals.forEach(goal => {
+    const goalItem = document.createElement('div');
+    goalItem.className = 'goal-item';
+    goalItem.innerHTML = `
+        <h3>${goal.city}, ${goal.country}</h3>
+        <p>Pogoda: ${goal.weather}, ${goal.temperature}°C</p>
+    `;
+    divList.appendChild(goalItem);
+});
