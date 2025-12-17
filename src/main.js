@@ -7,6 +7,12 @@ import { weatherCodes, weatherIcons } from './modules/weatherCodes';
 
 let goals = [];
 const divList = document.createElement('div');
+divList.id = 'goalsList';
+const header = document.createElement('h2');
+header.textContent = 'Lista miejsc do odwiedzenia:';
+divList.appendChild(header);
+const goalsContainer = document.createElement('div');
+divList.appendChild(goalsContainer);
 
 var map = L.map('map').setView([0, 0], 2);
 
@@ -51,17 +57,26 @@ async function onMapClick(e) {
                         latitude: lat,
                         longitude: lng,
                         weather: weatherCodes[weather.weathercode],
-                        temperature: weather.temperature
+                        temperature: weather.temperature,
+                        note: ''
                     });
-                    divList.innerHTML = '<h2>Lista miejsc do odwiedzenia:</h2>';
-                    goals.forEach(goal => {
+                    console.log(goals);
+                    goalsContainer.innerHTML = '';
+                    goals.forEach((goal, index) => {
                         const goalItem = document.createElement('div');
                         goalItem.className = 'goal-item';
                         goalItem.innerHTML = `
                             <h3>${goal.city}, ${goal.country}</h3>
                             <p>Pogoda: ${goal.weather}, ${goal.temperature}°C</p>
+                            <input type='text' placeholder='Notatki... ' value="${goal.note || ''}"/>
                         `;
-                        divList.appendChild(goalItem);
+
+                        const input = goalItem.querySelector('input');
+                        input.addEventListener('input', (e) => {
+                            goals[index].note = e.target.value;
+                        });
+
+                        goalsContainer.appendChild(goalItem);
                     });
                     app.appendChild(divList);
                 });
