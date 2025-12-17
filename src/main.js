@@ -14,7 +14,7 @@ divList.appendChild(header);
 const goalsContainer = document.createElement('div');
 divList.appendChild(goalsContainer);
 
-var map = L.map('map').setView([0, 0], 2);
+var map = L.map('map').setView([0, 0], 3);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -60,7 +60,6 @@ async function onMapClick(e) {
                         temperature: weather.temperature,
                         note: ''
                     });
-                    console.log(goals);
                     goalsContainer.innerHTML = '';
                     goals.forEach((goal, index) => {
                         const goalItem = document.createElement('div');
@@ -78,6 +77,7 @@ async function onMapClick(e) {
 
                         goalsContainer.appendChild(goalItem);
                     });
+                    divList.classList.add('show');
                     app.appendChild(divList);
                 });
             });
