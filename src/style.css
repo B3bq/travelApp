@@ -62,7 +62,30 @@ body {
   transform: translateX(0);
 }
 
-#goalsList h2::after{
+#goalsList header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#goalsList #closeList {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+#goalsList h2 {
+    position: relative;
+    font-size: 20px;
+    margin: 0 0 10px 0;
+    padding: 0;
+    position: relative;
+}
+
+#goalsList #goalsContainer::before{
     display: block;
     content: "";
     width: 100%;
@@ -74,3 +97,39 @@ body {
 #goalsList div{
     overflow-y: auto;
   }
+
+#openList {
+  display: none;
+    position: absolute;
+    top: 15%;
+    right: 1%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: #333;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.4);
+    opacity: 1;
+    z-index: 1;
+}
+#openList.show {
+    display: block;
+}
+
+.leaflet-popup-content{
+  display: flex;
+  flex-direction: column;
+  letter-spacing: 0.5px;
+}
+.leaflet-popup-content h2, .leaflet-popup-content h4 {
+  margin: 0;
+  padding: 0;
+}
+.leaflet-popup-content button {
+  margin-top: 10px;
+  padding: 4px;
+  align-self: center;
+} 
